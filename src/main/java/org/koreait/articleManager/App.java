@@ -1,4 +1,8 @@
-package org.koreait;
+package org.koreait.articleManager;
+import org.koreait.controller.ArticleController;
+import org.koreait.controller.Controller;
+import org.koreait.controller.MemberController;
+
 import java.util.Scanner;
 
 public class App {
@@ -33,8 +37,6 @@ public class App {
                 continue;
             }
 
-            String actionMethodName = cmdBits[1];
-
             if (controllerName.equals("article")) {
                 controller = articleController;
             } else if (controllerName.equals("member")) {
@@ -43,23 +45,10 @@ public class App {
                 System.out.println("사용할 수 없는 명령어입니다");
                 continue;
             }
+
+            String actionMethodName = cmdBits[1];
             controller.doAction(cmd, actionMethodName);
 
-//            if (cmd.equals("member join")) {
-//                memberController.doJoin();
-//            } else if (cmd.equals("article write")) {
-//                articleController.doWrite();
-//            } else if (cmd.startsWith("article list")) {
-//                articleController.showList(cmd);
-//            } else if (cmd.startsWith("article detail")) {
-//                articleController.showDetail(cmd);
-//            } else if (cmd.startsWith("article delete")) {
-//                articleController.doDelete(cmd);
-//            } else if (cmd.startsWith("article modify")) {
-//                articleController.doModify(cmd);
-//            } else {
-//                System.out.println("사용할 수 없는 명령어입니다");
-//            }
 
         }
         System.out.println("==프로그램 종료==");

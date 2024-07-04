@@ -1,30 +1,27 @@
 package org.koreait.controller;
-
-import org.koreait.dto.Article;
 import org.koreait.util.Util;
-
+import org.koreait.dto.Article;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 public class ArticleController extends Controller {
-
     private Scanner sc;
     private List<Article> articles;
     private String cmd;
-
     private int lastArticleId = 3;
-
     public ArticleController(Scanner sc) {
         this.sc = sc;
         articles = new ArrayList<>();
     }
-
     public void doAction(String cmd, String actionMethodName) {
         this.cmd = cmd;
 
         switch (actionMethodName) {
             case "write":
+                if(isLogined() == false){
+                    System.out.println("로그인 필요");
+                    return;
+                }
                 doWrite();
                 break;
             case "list":
@@ -34,9 +31,17 @@ public class ArticleController extends Controller {
                 showDetail();
                 break;
             case "modify":
+                if(isLogined() == false){
+                    System.out.println("로그인 필요");
+                    return;
+                }
                 doModify();
                 break;
             case "delete":
+                if(isLogined() == false){
+                    System.out.println("로그인 필요");
+                    return;
+                }
                 doDelete();
                 break;
             default:
@@ -45,8 +50,8 @@ public class ArticleController extends Controller {
         }
     }
 
-
     private void doWrite() {
+
         System.out.println("==게시글 작성==");
         int id = lastArticleId + 1;
         String regDate = Util.getNow();
@@ -55,29 +60,22 @@ public class ArticleController extends Controller {
         String title = sc.nextLine();
         System.out.print("내용 : ");
         String body = sc.nextLine();
-
         Article article = new Article(id, regDate, updateDate, title, body);
         articles.add(article);
-
         System.out.println(id + "번 글이 생성되었습니다");
         lastArticleId++;
     }
-
     private void showList() {
         System.out.println("==게시글 목록==");
         if (articles.size() == 0) {
             System.out.println("아무것도 없어");
             return;
         }
-
         String searchKeyword = cmd.substring("article list".length()).trim();
-
         List<Article> forPrintArticles = articles;
-
         if (searchKeyword.length() > 0) {
             System.out.println("검색어 : " + searchKeyword);
             forPrintArticles = new ArrayList<>();
-
             for (Article article : articles) {
                 if (article.getTitle().contains(searchKeyword)) {
                     forPrintArticles.add(article);
@@ -89,7 +87,6 @@ public class ArticleController extends Controller {
                 return;
             }
         }
-
         System.out.println("  번호   /    날짜   /   제목   /   내용   ");
         for (int i = forPrintArticles.size() - 1; i >= 0; i--) {
             Article article = forPrintArticles.get(i);
@@ -98,18 +95,12 @@ public class ArticleController extends Controller {
             } else {
                 System.out.printf("  %d   /   %s      /   %s   /   %s  \n", article.getId(), article.getRegDate().split(" ")[0], article.getTitle(), article.getBody());
             }
-
         }
-
     }
-
     private void showDetail() {
         System.out.println("==게시글 상세보기==");
-
         int id = Integer.parseInt(cmd.split(" ")[2]);
-
         Article foundArticle = getArticleById(id);
-
         if (foundArticle == null) {
             System.out.println("해당 게시글은 없습니다");
             return;
@@ -120,14 +111,10 @@ public class ArticleController extends Controller {
         System.out.println("제목 : " + foundArticle.getTitle());
         System.out.println("내용 : " + foundArticle.getBody());
     }
-
     private void doDelete() {
         System.out.println("==게시글 삭제==");
-
         int id = Integer.parseInt(cmd.split(" ")[2]);
-
         Article foundArticle = getArticleById(id);
-
         if (foundArticle == null) {
             System.out.println("해당 게시글은 없습니다");
             return;
@@ -135,14 +122,10 @@ public class ArticleController extends Controller {
         articles.remove(foundArticle);
         System.out.println(id + "번 게시글이 삭제되었습니다");
     }
-
     private void doModify() {
         System.out.println("==게시글 수정==");
-
         int id = Integer.parseInt(cmd.split(" ")[2]);
-
         Article foundArticle = getArticleById(id);
-
         if (foundArticle == null) {
             System.out.println("해당 게시글은 없습니다");
             return;
@@ -153,14 +136,11 @@ public class ArticleController extends Controller {
         String newTitle = sc.nextLine();
         System.out.print("새 내용 : ");
         String newBody = sc.nextLine();
-
         foundArticle.setTitle(newTitle);
         foundArticle.setBody(newBody);
         foundArticle.setUpdateDate(Util.getNow());
-
         System.out.println(id + "번 게시글이 수정되었습니다");
     }
-
     private Article getArticleById(int id) {
         for (Article article : articles) {
             if (article.getId() == id) {
@@ -169,7 +149,6 @@ public class ArticleController extends Controller {
         }
         return null;
     }
-
     public void makeTestData() {
         System.out.println("게시글 테스트 데이터 생성");
         articles.add(new Article(1, "2023-12-12 12:12:12", "2023-12-12 12:12:12", "제목123", "내용1"));
